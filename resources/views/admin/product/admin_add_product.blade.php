@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <h4 class="card-title">Add Product</h4>
     
-                    <form action="{{route('admin.product.store')}}" method="post" enctype="multipart/form-data">
+                    <form action="{{route('admin.store.product')}}" method="post" enctype="multipart/form-data">
                         @csrf
     
                         <div class="mb-3">
