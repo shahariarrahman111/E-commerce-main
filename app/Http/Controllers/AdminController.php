@@ -181,7 +181,7 @@ class AdminController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('admin.delete.category')->with([
+        return redirect()->route('admin.category.list')->with([
             'message' => 'Product Category deleted successfully.',
             'alert-type' => 'success',
         ]);
@@ -213,6 +213,10 @@ class AdminController extends Controller
 
     public function storeProduct(Request $request)
     {
+
+        // dd($request->all());
+
+
         $validatedInput = $request->validate([
             'photo' => 'nullable|image|mimes:png,jpg,jpeg,gif,webp|max:2048',
             'category_id' => 'required|exists:categories,id',
@@ -231,7 +235,7 @@ class AdminController extends Controller
 
         Product::create($validatedInput);
 
-        return redirect()->back()->with([
+        return redirect()->route('admin.product.list')->with([
             'message' => 'Product Added Successfully.',
             'alert-type' => 'success',
         ]);
@@ -284,7 +288,7 @@ class AdminController extends Controller
     $product = Product::findOrFail($id);
     $product->delete();
 
-    return redirect()->route('admin.product')->with([
+    return redirect()->route('admin.product.list')->with([
         'message' => 'Product Deleted Successfully.',
         'alert-type' => 'success',
     ]);

@@ -69,9 +69,9 @@
 
                         
                         <div class="mb-3">
-                            <label class="form-label">Product Description</label>
+                            <label class="form-label">Product Discription</label>
                             <textarea id="discription" class="form-control" name="discription" rows="8"
-                            placeholder="Enter a detailed discription of your product..."></textarea>
+                            placeholder="Enter a detailed description of your product..."></textarea>
                         </div>
     
 

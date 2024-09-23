@@ -44,7 +44,7 @@
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td class="text-center">
-                                            <img src="{{asset('upload/admin_images' . $category->photo)}}" alt="Category Image"
+                                            <img src="{{ asset('upload/admin_images/' . $category->photo) }}" alt="Category Image"
                                             style="width: 50px; height: 50px;">
                                         </td>
                                         <td>{{$category->category_name}}</td>

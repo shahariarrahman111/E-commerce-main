@@ -31,7 +31,7 @@
                         
                         <div class="mb-3">
                             <label for="category" class="form-label">Product Photo</label>
-                            <input type="file" name="photo" class="form-control" id = "image" autocomplete="off">
+                            <input type="file" name="photo" class="form-control" autocomplete="off">
                         </div>
 
                         <div class="mb-3">

@@ -70,7 +70,7 @@
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td class="text-center">
-                                                <img src="{{asset('upload/admin_image' . $product->photo)}}" 
+                                                <img src="{{ asset('upload/admin_images/' . $product->photo) }}" 
                                                 alt="Product Image" style="width: 50px; height: 50px;">
                                             </td>
                                             <td class="text-center">{{$product->name}}</td>
