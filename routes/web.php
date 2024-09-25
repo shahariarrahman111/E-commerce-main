@@ -21,6 +21,62 @@ use App\Http\Controllers\AdminController;
 
 
 
+Route::get('/', [CustomerController::class, 'CustomerIndex'])->name('customer.index');
+Route::get('/categories/{id}', [CustomerController::class, 'CustomerCategoryProduct'])->name('customer.category.product');
+Route::get('/products', [CustomerController::class, 'CustomerProduct'])->name('customer.product');
+Route::get('/product/{id}', [CustomerController::class, 'CustomerProductDetials'])->name('customer.product.details');
+Route::get('/about-us', [CustomerController::class, 'CustomerAbout'])->name('customer.about');
+Route::get('/contact', [CustomerController::class, 'CustomerContact'])->name('customer.contact');
+Route::get('/wishlist', [CustomerController::class, 'CustomerWishList'])->name('customer.wishlist');
+Route::get('/cart', [CustomerController::class, 'CustomerCart'])->name('customer.cart');
+
+// SSLCOMMERZ Start
+Route::get('/checkout1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
+Route::get('/checkout2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
+
+// Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+// Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+
+// Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+// Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+// Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+
+// Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+// //SSLCOMMERZ END
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [CustomerController::class, 'CustomerCheckout'])->name('customer.checkout');
+    Route::get('/checkout/addresses', [CustomerController::class, 'showAddresses'])->name('myaccount.addresses');
+    Route::post('/checkout/addresses/add', [CustomerController::class, 'addAddress'])->name('address.add');
+    Route::post('/checkout/addresses/edit/{id}', [CustomerController::class, 'editAddress'])->name('address.edit');
+    Route::post('/checkout/addresses/delete/{id}', [CustomerController::class, 'deleteAddress'])->name('address.delete');
+    Route::post('/order', [CustomerController::class, 'OrderStore'])->name('order.store');
+    Route::patch('/order/{order}/status', [CustomerController::class, 'updateStatus'])->name('order.updateStatus');
+    Route::patch('/order/{order}/payment-status', [CustomerController::class, 'updatePaymentStatus'])->name('order.updatePaymentStatus');
+    Route::get('/invoice', [CustomerController::class, 'CustomerInvoice'])->name('customer.invoice');
+    Route::get('/myaccount', [CustomerController::class, 'CustomerMyaccount'])->name('customer.myaccount');
+    Route::post('/update-profile', [CustomerController::class, 'updateProfile'])->name('update.profile');
+    Route::post('/change-password', [CustomerController::class, 'changePassword'])->name('change.password');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+});
+
+
+
+// SSLCommerz routes
+Route::post('/pay', [SslCommerzPaymentController::class, 'index'])->name('pay.sslcommerz');
+Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax'])->name('pay.Via.ajax');
+Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+
+
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
 
 
 require __DIR__ . '/auth.php';
@@ -60,6 +116,33 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/edit/product/{id}', [AdminController::class, 'editProduct'])->name('admin.edit.product');
     Route::put('/update/product/{id}', [AdminController::class, 'updateProduct'])->name('admin.update.product');
     Route::delete('/delete/product/{id}', [AdminController::class, 'deleteProduct'])->name('admin.delete.product');
+
+
+    Route::get('/admin/orders', [AdminController::class, 'AdminOrder'])->name('admin.order');
+    Route::get('/admin/order/view/{order}', [AdminController::class, 'AdminOrderView'])->name('admin.order.view');
+
+    Route::patch('/admin/orders/{order}/status', [AdminController::class, 'updateStatus'])->name('admin.order.updateStatus');
+    Route::patch('/admin/orders/{order}/payment-status', [AdminController::class, 'updatePaymentStatus'])->name('admin.order.updatePaymentStatus');
+
+
+
+
+    
+    // Admin Report
+    Route::get('/admin/report', [AdminController::class, 'CustomerReport'])->name('customer.report');
+    Route::get('/admin/report/order/{order}', [AdminController::class, 'CustomerAllOrders'])->name('customer.report.all.orders');
+    Route::get('/admin/report/{customer}', [AdminController::class, 'CustomerReportOrderView'])->name('customer.report.order.view');
+
+    Route::get('admin/report/{customerId}/pdf', [AdminController::class, 'downloadCustomerOrdersPDF'])->name('customer.report.pdf');
+
+
+
+
+
+
+
+
+
 });
 
 

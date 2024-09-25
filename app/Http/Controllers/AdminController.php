@@ -294,4 +294,160 @@ class AdminController extends Controller
     ]);
   }
 
+
+  public function AdminOrder()
+  {
+      $orders = Order::with(['user', 'items.product', 'address'])->get();
+      return view('admin.order.admin_order', compact('orders'));
+  }
+
+
+  public function AdminOrderView($order)
+  {
+      $order = Order::with('user', 'address', 'items.product')->findOrFail($order);
+      return view('admin.order.admin_order_view', compact('order'));
+  }
+  
+  
+  public function updateStatus(Request $request, Order $order)
+  {
+      $request->validate([
+          'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled,returned',
+      ]);
+
+      $order->status = $request->status;
+      $order->save();
+
+      return redirect()->route('admin.order.view', $order->id)->with('success', 'Order status updated successfully.');
+  }
+
+  public function updatePaymentStatus(Request $request, Order $order)
+  {
+      $request->validate([
+          'payment_status' => 'required|string|in:pending_payment,payment_due,paid,payment_failed,refunded',
+      ]);
+
+      $order->payment_status = $request->payment_status;
+      $order->save();
+
+      return redirect()->route('admin.order.view', $order->id)->with('success', 'Payment status updated successfully.');
+  }
+
+
+  public function CustomerReport(Request $request)
+  {
+      $query = User::has('orders')->withCount('orders')->with([
+          'orders' => function ($q) use ($request) {
+              if ($request->filled('order_number')) {
+                  $q->where('order_number', $request->order_number);
+              }
+              if ($request->filled('date')) {
+                  $q->whereDate('created_at', $request->date);
+              }
+          }
+      ]);
+
+      
+      if ($request->filled('customer_name')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('firstname', 'like', '%' . $request->customer_name . '%')
+                ->orWhere('lastname', 'like', '%' . $request->customer_name . '%');
+        });
+    }
+
+    $customers = $query->paginate(10);
+
+    return view('admin.report.customer_report', compact('customers'));
+}
+
+
+public function CustomerAllOrders(Request $request, $customerId)
+{
+    $customer = User::findOrFail($customerId);
+
+    $query = Order::with('user', 'address', 'items.product')->where('user_id', $customerId);
+
+    if ($request->filled('order_number')) {
+        $query->where('order_number', $request->order_number);
+    }
+
+    if ($request->filled('date')) {
+        $query->whereDate('created_at', $request->date);
+    }
+
+    if ($request->filled('month')) {
+        $query->whereMonth('created_at', $request->month);
+    }
+
+    $orders = $query->get();
+
+    return view('admin.report.customer_orders_report_view', compact('customer', 'orders'));
+}
+
+
+public function CustomerReportOrderView($order)
+{
+    $order = Order::with('user', 'address', 'items.product')->findOrFail($order);
+    return view('admin.report.customer_report_single_order_view', compact('order'));
+}
+
+public function downloadCustomerOrdersPDF(Request $request, $customerId)
+{
+    $customer = User::with('address')->findOrFail($customerId);
+
+    $query = Order::with(['items.product', 'address'])->where('user_id', $customerId);
+
+    if ($request->filled('order_number')) {
+        $query->where('order_number', $request->order_number);
+    }
+
+    if ($request->filled('date')) {
+        $query->whereDate('created_at', $request->date);
+    }
+
+    if ($request->filled('month')) {
+        $query->whereMonth('created_at', $request->month);
+    }
+
+    $orders = $query->get();
+
+    $pdf = PDF::loadView('admin.report.pdf', compact('customer', 'orders'));
+
+    return $pdf->download('customer_orders_report.pdf');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    // ------------------------------------    API For Flutter    -------------------------
+
+
+    public function GetCategories()
+    {
+        \Log::info('GetCategories method hit');
+
+        $categories = Category::all();
+        return response()->json($categories);
+    }
+
+
+    public function GetProducts()
+    {
+        \Log::info('GetProducts method hit');
+
+        $products = Product::all();
+        return response()->json($products);
+    }
+
+
+    
+
 }
